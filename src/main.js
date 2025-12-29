@@ -8,19 +8,17 @@ const body = document.body;
 function setTheme(isDark) {
     if (isDark) {
         html.classList.add('dark');
-        body.classList.remove('light');
-        body.classList.add('bg-dark-bg', 'text-dark-text');
-        sunIcon.classList.remove('hidden');
-        moonIcon.classList.add('hidden');
+        html.classList.remove('light');
     } else {
         html.classList.remove('dark');
-        body.classList.add('light');
-        body.classList.remove('bg-dark-bg', 'text-dark-text');
-        body.classList.add('bg-light-bg', 'text-light-text');
-        sunIcon.classList.add('hidden');
-        moonIcon.classList.remove('hidden');
+        html.classList.add('light');
     }
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
+
+    // Update animation colors if the instance exists
+    if (window.dataAnimation) {
+        window.dataAnimation.updateColors(isDark);
+    }
 }
 
 // Check saved theme
@@ -35,11 +33,17 @@ themeToggle.addEventListener('click', () => {
 // Scroll Header Logic
 const header = document.getElementById('header');
 window.addEventListener('scroll', () => {
+    const isDark = document.documentElement.classList.contains('dark');
     if (window.scrollY > 50) {
-        header.classList.add('bg-dark-bg/80', 'backdrop-blur-md', 'border-[#1e293b]');
-        header.classList.remove('border-transparent');
+        if (isDark) {
+            header.classList.add('bg-dark-bg/80', 'backdrop-blur-md', 'border-[#1e293b]');
+            header.classList.remove('bg-light-bg/80', 'border-gray-200', 'border-transparent');
+        } else {
+            header.classList.add('bg-light-bg/80', 'backdrop-blur-md', 'border-gray-200');
+            header.classList.remove('bg-dark-bg/80', 'border-[#1e293b]', 'border-transparent');
+        }
     } else {
-        header.classList.remove('bg-dark-bg/80', 'backdrop-blur-md', 'border-[#1e293b]');
+        header.classList.remove('bg-dark-bg/80', 'backdrop-blur-md', 'border-[#1e293b]', 'bg-light-bg/80', 'border-gray-200');
         header.classList.add('border-transparent');
     }
 });
